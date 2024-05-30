@@ -232,3 +232,6 @@ def render_plots(cfg: dict):
 def delete_plots(cfg: dict):
     if dpg.does_item_exist("plots"):
         dpg.delete_item("plots")
+    for stock in cfg["stocks"]:
+        if dpg.does_item_exist(f"plot_{stock['ISIN']}"):
+            dpg.delete_item(f"plot_{stock['ISIN']}")
