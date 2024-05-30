@@ -1,4 +1,4 @@
-# Mooiorny: market data tracker
+# Mooniorny: market data tracker
 
 <div align="center"><img src="https://github.com/lp177/mooniorny/blob/master/mooniorny.png?raw=true" alt="Logo"></div>
 
