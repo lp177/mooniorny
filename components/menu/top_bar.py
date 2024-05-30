@@ -48,11 +48,11 @@ def init_menu(_cfg: dict):
 
         with dpg.menu(label="Preferences"):
             dpg.add_menu_item(
-                label="Settings",
+                label="UI",
                 callback=lambda: dpg.configure_item("settings_window", show=True),
             )
-            dpg.add_menu_item(label="Import setting", callback=work_in_progress)
-            dpg.add_menu_item(label="Export setting", callback=work_in_progress)
+            dpg.add_menu_item(label="Stocks", callback=work_in_progress)
+            dpg.add_menu_item(label="Alerts", callback=work_in_progress)
 
         with dpg.menu(label="Sort"):
             dpg.add_menu_item(

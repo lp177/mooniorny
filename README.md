@@ -8,7 +8,7 @@
 - [Configuration](#configuration)
 
 
-<div align="center"><img src="https://github.com/lp177/mooniorny/blob/master/mooniorny.png?raw=true" alt="Logo"></div><br>
+<div align="center"><img src="https://github.com/lp177/mooniorny/blob/master/images/mooniorny.png?raw=true" alt="Logo"></div><br>
 
 ## Presentation
 
@@ -20,8 +20,8 @@ This an alpha preview, many features are again in devellopement.
 
 ## Screenshoots
 
-<img src="https://github.com/lp177/mooniorny/blob/master/screenshoots/default_dash.png">  
-<img src="https://github.com/lp177/mooniorny/blob/master/screenshoots/settings.png">
+<img src="https://github.com/lp177/mooniorny/blob/master/images/screenshoots/default_dash.png">  
+<img src="https://github.com/lp177/mooniorny/blob/master/images/screenshoots/settings.png">
 
 ## Installation
 
