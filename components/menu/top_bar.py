@@ -1,6 +1,11 @@
 import dearpygui.dearpygui as dpg
 from utils.modal import modal
-from utils.plots_manager import render_plots, update_graph, monitor_stocks, change_period
+from utils.plots_manager import (
+    render_plots,
+    update_graph,
+    monitor_stocks,
+    change_period,
+)
 
 
 def init_menu(_cfg: dict):

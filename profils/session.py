@@ -1,3 +1,1 @@
-cfg = {
-    "last_profil_used": "default"
-}
+cfg = {"last_profil_used": "default"}

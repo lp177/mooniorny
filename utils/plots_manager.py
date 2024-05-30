@@ -1,5 +1,6 @@
 import yfinance, datetime
 import dearpygui.dearpygui as dpg
+from utils.notify import alert
 
 
 plot_lines_tags = {}
@@ -79,13 +80,14 @@ def update_graph(cfg: dict, stock: dict):
         return
 
     state = None
-    maturity = stock["maturity"] if "maturity" in stock else cfg["ui"]["default_maturity"]
+    maturity = (
+        stock["maturity"] if "maturity" in stock else cfg["ui"]["default_maturity"]
+    )
     maturity_color = (
         stock["colors"]["maturity"]
         if "maturity" in stock["colors"]
         else cfg["ui"]["colors"]["maturity"]
     )
-
     for i in range(len(price_history[stock["ISIN"]])):
         price = price_history[stock["ISIN"]][i]
         date = date_history[stock["ISIN"]][i]
@@ -121,9 +123,11 @@ def update_graph(cfg: dict, stock: dict):
     if state == "maturity":
         if stock["name"] not in maturities:
             maturities[stock["name"]] = datetime.datetime.now()
-            alert(cfg, stock["name"], last_price)
+            alert(cfg, stock["name"], price)
     elif stock["name"] in maturities:
-        if maturities[stock["name"]] > datetime.datetime.now() - timedelta(minutes=15):
+        if maturities[stock["name"]] > datetime.datetime.now() - datetime.timedelta(
+            minutes=15
+        ):
             del maturities[stock["name"]]
 
     if current_segment["points"]:
@@ -211,7 +215,10 @@ def render_plots(cfg: dict):
                     width=100,
                 )
             if (
-                position_y + 3 + cfg["ui"]["graph_initial_height"] + cfg["ui"]["graph_initial_height"]
+                position_y
+                + 3
+                + cfg["ui"]["graph_initial_height"]
+                + cfg["ui"]["graph_initial_height"]
                 > cfg["ui"]["screen_height"]
             ):
                 position_x += cfg["ui"]["graph_initial_width"] + 3
@@ -220,9 +227,8 @@ def render_plots(cfg: dict):
                 position_y += cfg["ui"]["graph_initial_height"] + 3
 
     dpg.set_primary_window("plots", True)
-    # dpg.pop_container_stack()
 
 
 def delete_plots(cfg: dict):
-    if dpg.does_item_exist(f"plots"):
-        dpg.delete_item(f"plots")
+    if dpg.does_item_exist("plots"):
+        dpg.delete_item("plots")

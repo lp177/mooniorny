@@ -3,6 +3,7 @@ import os
 SMS_USER = os.getenv("SMS_USER")
 SMS_PASSWORD = os.getenv("SMS_PASSWORD")
 
+
 def send_sms(msg: str):
     import urllib.parse
     import urllib.request

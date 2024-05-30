@@ -1,5 +1,6 @@
 import time
 import threading
+from profils import session
 import dearpygui.dearpygui as dpg
 from utils.cfg_manager import get_cfg
 from utils.plots_manager import render_plots, initialize_price_history, monitor_stocks
@@ -8,7 +9,9 @@ from components.menu.top_bar import init_menu
 
 def initialize_gui(cfg):
     dpg.create_context()
-    dpg.create_viewport(title=cfg["ui"]["title"], width=2560, height=cfg["ui"]["screen_height"])
+    dpg.create_viewport(
+        title=cfg["ui"]["title"], width=2560, height=cfg["ui"]["screen_height"]
+    )
     render_plots(cfg)
     init_menu(cfg)
     dpg.setup_dearpygui()
@@ -21,7 +24,6 @@ def start_monitoring():
         if cfg["ui"]["monitor"] is True:
             monitor_stocks(cfg)
 
-from profils import session
 
 cfg = get_cfg(session.cfg["last_profil_used"])
 
