@@ -1,6 +1,6 @@
 # Mooniorny: market data tracker
 
-<div align="center"><img src="https://github.com/lp177/mooniorny/blob/master/mooniorny.png?raw=true" alt="Logo"></div>
+<div align="center"><img src="https://github.com/lp177/mooniorny/blob/master/mooniorny.png?raw=true" alt="Logo"></div><br>
 
 This project monitors stock prices in real-time using the [yfinance](https://github.com/ranaroussi/yfinance) library, displaying their historical and current values in an interactive GUI built with [DearPyGui](https://github.com/hoffstadt/DearPyGui).
 Users can configure the refresh interval, way to notify on price events, have multiple profils, view price data for multiple stocks with different time periods...  
