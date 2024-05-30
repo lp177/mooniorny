@@ -1,17 +1,21 @@
 # Mooiorny: market data tracker
 
+<div align="center"><img src="https://github.com/lp177/mooniorny/blob/master/mooniorny.png?raw=true" alt="Logo"></div>
+
 This project monitors stock prices in real-time using the [yfinance](https://github.com/ranaroussi/yfinance) library, displaying their historical and current values in an interactive GUI built with [DearPyGui](https://github.com/hoffstadt/DearPyGui).
-Users can configure the refresh interval, way to notify on price events, have multiple profils, view price data for multiple stocks with different time periods...
+Users can configure the refresh interval, way to notify on price events, have multiple profils, view price data for multiple stocks with different time periods...  
 The GUI also highlights price changes with custom colors based on user specified conditions.
 
 This an alpha preview, many features are again in devellopement.
+
+<img src="https://github.com/lp177/mooniorny/blob/master/screenshoots/default_dash.png">  
+<img src="https://github.com/lp177/mooniorny/blob/master/screenshoots/settings.png">
 
 ## Summary
 
 - [Installation](#installation)
 - [Configuration](#configuration)
 - [Notification](#Notification)
-
 
 ## Installation
 
