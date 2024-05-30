@@ -1,0 +1,5 @@
+yfinance[nospam,repair]
+matplotlib
+dearpygui
+black
+flake8
