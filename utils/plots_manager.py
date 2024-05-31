@@ -176,62 +176,65 @@ def render_plots(cfg: dict):
     position_x = 0
     position_y = 21
 
-    with dpg.window(tag="plots"):
-        for stock in cfg["stocks"]:
-            with dpg.window(
-                label=f"{stock['name']}",
-                tag=f"plot_{stock['ISIN']}",
-                width=cfg["ui"]["graph_initial_width"],
-                height=cfg["ui"]["graph_initial_height"],
-                pos=(position_x, position_y),
+    if not dpg.does_item_exist("plots"):
+        with dpg.window(tag="plots"):
+            dpg.set_primary_window("plots", True)
+    dpg.push_container_stack("plots")
+    for stock in cfg["stocks"]:
+        with dpg.window(
+            label=f"{stock['name']}",
+            tag=f"plot_{stock['ISIN']}",
+            width=cfg["ui"]["graph_initial_width"],
+            height=cfg["ui"]["graph_initial_height"],
+            pos=(position_x, position_y),
+            no_focus_on_appearing=True,
+        ):
+            with dpg.plot(
+                crosshairs=True,
+                no_title=True,
             ):
-                with dpg.plot(
-                    crosshairs=True,
-                    no_title=True,
-                ):
-                    dpg.add_plot_axis(
-                        dpg.mvXAxis,
-                        tag=f"{stock['ISIN']}_x_axis",
-                        time=True,
-                        no_tick_labels=False,
-                        no_gridlines=True,
-                    )
-                    dpg.add_plot_axis(
-                        dpg.mvYAxis,
-                        tag=f"{stock['ISIN']}_y_axis",
-                        user_data={"stock": stock},
-                    )
-                    dpg.add_line_series(
-                        [],
-                        [],
-                        tag=f"Plot_{stock['ISIN']}",
-                        parent=f"{stock['ISIN']}_y_axis",
-                    )
-                dpg.add_combo(
-                    default_value=cfg["ui"]["default_time_range"],
-                    items=list(cfg["ui"]["periods"].keys()),
-                    callback=change_period,
-                    user_data={"cfg": cfg, "stock": stock},
-                    width=100,
+                dpg.add_plot_axis(
+                    dpg.mvXAxis,
+                    tag=f"{stock['ISIN']}_x_axis",
+                    time=True,
+                    no_tick_labels=False,
+                    no_gridlines=True,
                 )
-            if (
-                position_y
-                + 3
-                + cfg["ui"]["graph_initial_height"]
-                + cfg["ui"]["graph_initial_height"]
-                > cfg["ui"]["screen_height"]
-            ):
-                position_x += cfg["ui"]["graph_initial_width"] + 3
-                position_y = 21
-            else:
-                position_y += cfg["ui"]["graph_initial_height"] + 3
-
-    dpg.set_primary_window("plots", True)
+                dpg.add_plot_axis(
+                    dpg.mvYAxis,
+                    tag=f"{stock['ISIN']}_y_axis",
+                    user_data={"stock": stock},
+                )
+                dpg.add_line_series(
+                    [],
+                    [],
+                    tag=f"Plot_{stock['ISIN']}",
+                    parent=f"{stock['ISIN']}_y_axis",
+                )
+            dpg.add_combo(
+                default_value=cfg["ui"]["default_time_range"],
+                items=list(cfg["ui"]["periods"].keys()),
+                callback=change_period,
+                user_data={"cfg": cfg, "stock": stock},
+                width=100,
+            )
+        if (
+            position_y
+            + 3
+            + cfg["ui"]["graph_initial_height"]
+            + cfg["ui"]["graph_initial_height"]
+            > cfg["ui"]["screen_height"]
+        ):
+            position_x += cfg["ui"]["graph_initial_width"] + 3
+            position_y = 21
+        else:
+            position_y += cfg["ui"]["graph_initial_height"] + 3
+    dpg.pop_container_stack()
 
 
 def delete_plots(cfg: dict):
-    if dpg.does_item_exist("plots"):
-        dpg.delete_item("plots")
+    # if dpg.does_item_exist("plots"):
+    #     dpg.delete_item("plots")
     for stock in cfg["stocks"]:
         if dpg.does_item_exist(f"plot_{stock['ISIN']}"):
             dpg.delete_item(f"plot_{stock['ISIN']}")

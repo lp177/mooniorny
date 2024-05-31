@@ -13,8 +13,8 @@ def initialize_gui(cfg):
         title=cfg["ui"]["title"],
         width=2560,
         height=cfg["ui"]["screen_height"],
-        large_icon = "images/mooniorny.ico",
-        small_icon = "images/mooniorny_small.ico"
+        large_icon="images/mooniorny.ico",
+        small_icon="images/mooniorny_small.ico",
     )
     dpg.set_viewport_small_icon("images/mooniorny_small.ico")
     dpg.set_viewport_large_icon("images/mooniorny.ico")

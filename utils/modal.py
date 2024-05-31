@@ -1,3 +1,4 @@
+import uuid
 import dearpygui.dearpygui as dpg
 
 
@@ -8,6 +9,7 @@ def modal(
     width: int = 300,
     height: int = 200,
     show=True,
+    modal=True,
     padding_size: int = 30,
 ):
     top = int(dpg.get_viewport_height() / 2 - (height / 2))
@@ -16,8 +18,17 @@ def modal(
         left = 0
     if top < 0:
         top = 0
+    if tag == 0:
+        tag = uuid.uuid4()
     with dpg.window(
-        label=label, tag=tag, width=width, height=height, pos=(left, top), show=show
+        label=label,
+        tag=tag,
+        width=width,
+        height=height,
+        pos=(left, top),
+        show=show,
+        modal=modal,
+        on_close=lambda: dpg.delete_item(tag),
     ) as window:
         if text is not None:
             dpg.add_text(text)
