@@ -1,6 +1,7 @@
 import dearpygui.dearpygui as dpg
 from utils.modal import modal
-from utils.plots_manager import (
+from utils.profils import (get_profils_list, init_profil, open_profil)
+from utils.plots import (
     render_plots,
     update_graph,
     monitor_stocks,
@@ -8,7 +9,7 @@ from utils.plots_manager import (
 )
 import webbrowser
 
-settings_windows = ["about_modal", "settings_window", "work_in_progress"]
+settings_windows = ["about_modal", "new_profil_window", "settings_window", "work_in_progress"]
 
 
 def init_menu(_cfg: dict):
@@ -16,7 +17,8 @@ def init_menu(_cfg: dict):
     cfg = _cfg
 
     with dpg.viewport_menu_bar():
-        with dpg.menu(label="Dashboards"):
+        create_profils_menu()
+        with dpg.menu(label="Dashboards", tag="dashboards_menu"):
             dpg.add_menu_item(label="New dashboard", callback=work_in_progress)
             dpg.add_menu_item(label="Open dashboard", callback=work_in_progress)
             dpg.add_menu_item(label="Save dashboard", callback=work_in_progress)
@@ -56,12 +58,50 @@ def init_menu(_cfg: dict):
         dpg.add_menu_item(label="Help", callback=show_help)
 
 
+def create_profils_menu():
+    if dpg.does_item_exist("profils_menu"):
+        dpg.delete_item("profils_menu")
+        before = "dashboards_menu"
+    else:
+        before = 0
+    with dpg.menu(label="Profils", tag="profils_menu", before=before):
+        dpg.add_menu_item(label="New profil", callback=create_new_profil_window)
+        dpg.add_menu_item(label="Save profil", callback=work_in_progress)
+        dpg.add_menu_item(label="Delete profil", callback=work_in_progress)
+        with dpg.menu(label="Open profil"):
+            profils = get_profils_list()
+            for profil in profils:
+                if profil == "empty":
+                    continue
+                dpg.add_menu_item(
+                    label=profil, callback=lambda: open_profil(profil)
+                )
+
+
 def close_all_settings_windows():
 
     for tag in settings_windows:
         if dpg.does_item_exist(tag):
             dpg.delete_item(tag)
 
+
+def create_new_profil_window():
+    close_all_settings_windows()
+    modal(label="Profils", tag="new_profil_window", height=250)
+    dpg.push_container_stack("new_profil_window")
+    dpg.add_text("New profil name:")
+    dpg.add_input_text(tag="new_profil_name")
+    dpg.add_text("Copy from:")
+    dpg.add_combo(
+        default_value="empty",
+        items=get_profils_list(),
+        tag="new_profil_copy_from",
+    )
+    dpg.add_button(
+        label="Create",
+        callback=lambda: init_profil(dpg.get_value("new_profil_name"), dpg.get_value("new_profil_copy_from")),
+    )
+    dpg.pop_container_stack()
 
 def create_settings_ui_window():
     close_all_settings_windows()

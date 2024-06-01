@@ -3,6 +3,7 @@ def get_screen_height():
 
     root = tkinter.Tk()
     height = root.winfo_screenheight()
+    width = root.winfo_screenwidth()
     root.destroy()
     del tkinter
     return height

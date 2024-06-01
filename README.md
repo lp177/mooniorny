@@ -13,8 +13,10 @@
 ## Presentation
 
 This project monitors stock prices in real-time using the [yfinance](https://github.com/ranaroussi/yfinance) library, displaying their historical and current values in an interactive GUI built with [DearPyGui](https://github.com/hoffstadt/DearPyGui).
-Users can configure the refresh interval, way to notify on price events, have multiple profils, view price data for multiple stocks with different time periods...  
-The GUI also highlights price changes with custom colors based on user specified conditions.
+Users can easily customize the app by configuring notification methods for price events, managing multiple profiles and dashboards, refresh interval, colors, and etc...
+The app allows viewing price data for multiple stocks with different time periods.
+GUI highlights price changes with custom colors based on user-specified conditions who can by custom python code or simple values set with the GUI.
+New alert events and data processing functions can be effortlessly edited with code, making it highly flexible and adaptable to individual needs.
 
 This an alpha preview, many features are again in devellopement.
 

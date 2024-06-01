@@ -2,8 +2,8 @@ import time
 import threading
 from profils import session
 import dearpygui.dearpygui as dpg
-from utils.cfg_manager import get_cfg
-from utils.plots_manager import render_plots, initialize_price_history, monitor_stocks
+from utils.profils import open_profil
+from utils.plots import render_plots, initialize_price_history, monitor_stocks
 from components.menu.top_bar import init_menu
 
 
@@ -31,7 +31,7 @@ def start_monitoring():
             monitor_stocks(cfg)
 
 
-cfg = get_cfg(session.cfg["last_profil_used"])
+cfg = open_profil(session.cfg["last_profil_used"])
 
 initialize_price_history(cfg)
 initialize_gui(cfg)
