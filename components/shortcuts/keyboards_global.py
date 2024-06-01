@@ -12,7 +12,7 @@ def change_text(sender, app_data):
     if dpg.does_item_exist("shortcuts_displayed"):
         dpg.delete_item("shortcuts_displayed")
     txt = ""
-    for key in keymap:
+    for key in keymap[cfg["ui"]["keyboard_map"]]:
         if dpg.is_key_down(key):
             txt += keymap[cfg["ui"]["keyboard_map"]][key] + " + "
     dpg.add_text(txt[:-3], tag="shortcuts_displayed", parent="shortcuts_display")
@@ -32,7 +32,7 @@ keymap = {
         dpg.mvKey_Spacebar: "Spacebar",
         dpg.mvKey_Tab: "Tab",
         dpg.mvKey_Clear: "Clear",
-        dpg.mvKey_Return: "Return",
+        dpg.mvKey_Return: "Enter",
         dpg.mvKey_Pause: "Pause",
         dpg.mvKey_Capital: "Capital",
         dpg.mvKey_Escape: "Escape",
