@@ -1,5 +1,5 @@
 import os, platform, subprocess
-
+from utils.profils import cfg
 EMAIL_SMTP_SERVER_ADRESS = os.getenv("EMAIL_ADDRESS")
 EMAIL_SMTP_PORT = os.getenv("EMAIL_SMTP_PORT")
 EMAIL_RECEIVER_ADRESS = os.getenv("EMAIL_RECEIVER_ADRESS")
@@ -85,7 +85,7 @@ def desktop_notification(stock_name: str, message: str):
     print("OS: ", os, " not suported for desktop notification")
 
 
-def alert(cfg, stock_name: str, new_price: float):
+def alert(stock_name: str, new_price: float):
     message = f"Price of {stock_name} as reach maturity: {new_price}"
     if (
         "desktop_notification" in cfg["alerts"]

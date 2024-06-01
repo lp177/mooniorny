@@ -12,7 +12,7 @@ def cfg_module_to_dict(profil: str, section: str) -> dict:
     ).__dict__["cfg"]
 
 
-def init_stock(cfg: dict, stock: dict):
+def init_stock(stock: dict):
     if "colors" not in stock:
         stock["colors"] = {"default": cfg["ui"]["colors"]["default"]}
     elif "default" not in stock["colors"]:
@@ -26,14 +26,25 @@ def init_stock(cfg: dict, stock: dict):
         stock["last_state"] = None
 
 
-def set_default_values(cfg: dict):
+def set_default_values():
 
     for stock in cfg["stocks"]:
-        init_stock(cfg, stock)
+        init_stock(stock)
 
 
 def get_profils_list() -> list:
-    return [ fs_item.path.replace("profils/", "") for fs_item in os.scandir("profils") if fs_item.is_dir() ]
+    return [fs_item.path.replace("profils/", "") for fs_item in os.scandir("profils") if fs_item.is_dir()]
+
+
+def switch_profil(profil: str = "default") -> dict:
+    from utils.plots import (render_plots, monitor_stocks, delete_plots)
+    from components.menu.top_bar import create_profils_menu
+    delete_plots()
+    open_profil(profil)
+    render_plots()
+    create_profils_menu()
+    monitor_stocks()
+
 
 def open_profil(profil: str = "default") -> dict:
 
@@ -41,24 +52,24 @@ def open_profil(profil: str = "default") -> dict:
     cfg["ui"] = cfg_module_to_dict(profil, "ui")
     cfg["stocks"] = cfg_module_to_dict(profil, "stocks")
     cfg["alerts"] = cfg_module_to_dict(profil, "alerts")
-    set_default_values(cfg)
+    set_default_values()
     return cfg
 
 
-def init_profil(profil: str, copy_from_profil: str = "empty"):
+def create_profil(profil: str, copy_from_profil: str = "empty"):
     try:
         is_valid_profil_name(profil)
         is_valid_profil_name(copy_from_profil)
         shutil.copytree("profils/" + copy_from_profil, "profils/" + profil)
-        open_profil(profil)
+        switch_profil(profil)
         if dpg.does_item_exist("new_profil_window"):
             dpg.delete_item("new_profil_window")
-        from components.menu import create_profils_menu
-        create_profils_menu()
     except Exception as error_message:
+        print(error_message)
         if dpg.does_item_exist("new_profil_window_error"):
             dpg.delete_item("new_profil_window_error")
         dpg.add_text(str(error_message), color=(255,0,0), tag="new_profil_window_error", parent="new_profil_window", wrap=240)
+
 
 def is_valid_profil_name(profil: str):
     if not re.search(r"^[a-zA-Z0-9_]{1,100}$", profil):

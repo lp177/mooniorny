@@ -1,7 +1,7 @@
 import yfinance, datetime
 import dearpygui.dearpygui as dpg
 from utils.notify import alert
-
+from utils.profils import cfg
 
 plot_lines_tags = {}
 plot_line_themes = {}
@@ -11,7 +11,7 @@ date_history = {}
 maturities = {}
 
 
-def initialize_price_history(cfg: dict):
+def initialize_price_history():
     for stock in cfg["stocks"]:
         ticker = yfinance.Ticker(stock["ISIN"])
         history = ticker.history(
@@ -26,7 +26,7 @@ def initialize_price_history(cfg: dict):
         previous_prices[stock["ISIN"]] = price_history[stock["ISIN"]][-1]
 
 
-def monitor_stocks(cfg: dict):
+def monitor_stocks():
     for stock in cfg["stocks"]:
         ticker = yfinance.Ticker(stock["ISIN"])
         last_day_history = ticker.history(
@@ -39,10 +39,10 @@ def monitor_stocks(cfg: dict):
         price_history[stock["ISIN"]].append(last_price)
         date_history[stock["ISIN"]].append(int(last_day_history.index[-1].timestamp()))
 
-        update_graph(cfg, stock)
+        update_graph(stock)
 
 
-def apply_line_color_to(cfg: dict, to: str, color: str):
+def apply_line_color_to(to: str, color: str):
     if color in cfg["ui"]["colors"]:
         color = cfg["ui"]["colors"][color]
     if color not in plot_line_themes:
@@ -63,14 +63,14 @@ price_condition_function = {
 }
 
 
-def update_graph(cfg: dict, stock: dict):
+def update_graph(stock: dict):
 
     default_color = stock["colors"]["default"]
     segments = []
     current_segment = {"color": default_color, "points": []}
 
     if "price_condition" not in stock["colors"]:
-        apply_line_color_to(cfg, f"Plot_{stock['ISIN']}", default_color)
+        apply_line_color_to(f"Plot_{stock['ISIN']}", default_color)
         dpg.set_value(
             f"Plot_{stock['ISIN']}",
             [date_history[stock["ISIN"]], price_history[stock["ISIN"]]],
@@ -123,7 +123,7 @@ def update_graph(cfg: dict, stock: dict):
     if state == "maturity":
         if stock["name"] not in maturities:
             maturities[stock["name"]] = datetime.datetime.now()
-            alert(cfg, stock["name"], price)
+            alert(stock["name"], price)
     elif stock["name"] in maturities:
         if maturities[stock["name"]] > datetime.datetime.now() - datetime.timedelta(
             minutes=15
@@ -147,7 +147,7 @@ def update_graph(cfg: dict, stock: dict):
             parent=f"{stock['ISIN']}_y_axis",
             tag=tag,
         )
-        apply_line_color_to(cfg, tag, segment["color"])
+        apply_line_color_to(tag, segment["color"])
         i += 1
 
     dpg.fit_axis_data(f"{stock['ISIN']}_x_axis")
@@ -155,7 +155,6 @@ def update_graph(cfg: dict, stock: dict):
 
 
 def change_period(sender, period: str, user_data: dict):
-    cfg = user_data["cfg"]
     stock = user_data["stock"]
     ticker = yfinance.Ticker(stock["ISIN"])
     history = ticker.history(
@@ -167,11 +166,11 @@ def change_period(sender, period: str, user_data: dict):
     date_history[stock["ISIN"]] = [
         int(date.timestamp()) for date in history.index.tolist()
     ]
-    update_graph(cfg, stock)
+    update_graph(stock)
 
 
-def render_plots(cfg: dict):
-    delete_plots(cfg)
+def render_plots():
+    delete_plots()
 
     position_x = 0
     position_y = 21
@@ -232,7 +231,7 @@ def render_plots(cfg: dict):
     dpg.pop_container_stack()
 
 
-def delete_plots(cfg: dict):
+def delete_plots():
     for stock in cfg["stocks"]:
         if dpg.does_item_exist(f"plot_{stock['ISIN']}"):
             dpg.delete_item(f"plot_{stock['ISIN']}")

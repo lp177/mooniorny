@@ -1,13 +1,14 @@
-def get_screen_height():
+def get_screen_size():
     import tkinter
 
     root = tkinter.Tk()
     height = root.winfo_screenheight()
+    width = root.winfo_screenwidth()
     root.destroy()
     del tkinter
-    return height
+    return width, height
 
-
+width, height = get_screen_size()
 cfg = {
     "title": "Mooniorny",
     "monitor": True,
@@ -27,7 +28,7 @@ cfg = {
         "5 jours": "5d",
         "1 jour": "1d",
     },
-    "screen_height": get_screen_height() - 30,
+    "screen_height": height,
     "screen_width": 2560 if width > 2560 else width,
     "default_maturity": "down",
     "colors": {
@@ -42,4 +43,5 @@ cfg = {
         "purple": "4F2C73",
         "yellow": "FFE800",
     },
+    "keyboard_map": "qwerty",
 }

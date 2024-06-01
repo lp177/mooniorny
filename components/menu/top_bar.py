@@ -1,6 +1,6 @@
 import dearpygui.dearpygui as dpg
 from utils.modal import modal
-from utils.profils import (get_profils_list, init_profil, open_profil)
+from utils.profils import (cfg, get_profils_list, create_profil, switch_profil)
 from utils.plots import (
     render_plots,
     update_graph,
@@ -12,9 +12,7 @@ import webbrowser
 settings_windows = ["about_modal", "new_profil_window", "settings_window", "work_in_progress"]
 
 
-def init_menu(_cfg: dict):
-    global cfg
-    cfg = _cfg
+def init_menu():
 
     with dpg.viewport_menu_bar():
         create_profils_menu()
@@ -44,15 +42,15 @@ def init_menu(_cfg: dict):
 
         with dpg.menu(label="Sort"):
             dpg.add_menu_item(
-                label="Alphabetic", callback=lambda: sort_stocks_by_name(_cfg)
+                label="Alphabetic", callback=lambda: sort_stocks_by_name()
             )
             dpg.add_menu_item(label="Market", callback=work_in_progress)
             dpg.add_menu_item(
-                label="Maturity", callback=lambda: sort_stocks_by_maturity(_cfg)
+                label="Maturity", callback=lambda: sort_stocks_by_maturity()
             )
 
         with dpg.menu(label="Monit"):
-            dpg.add_menu_item(label="Refresh now", callback=lambda: monitor_stocks(cfg))
+            dpg.add_menu_item(label="Refresh now", callback=lambda: monitor_stocks())
             dpg.add_menu_item(label="Pause", callback=monitor_on_off, check=True)
 
         dpg.add_menu_item(label="Help", callback=show_help)
@@ -74,7 +72,7 @@ def create_profils_menu():
                 if profil == "empty":
                     continue
                 dpg.add_menu_item(
-                    label=profil, callback=lambda: open_profil(profil)
+                    label=profil, callback=lambda sender, state, profil: switch_profil(profil), user_data=profil
                 )
 
 
@@ -99,7 +97,7 @@ def create_new_profil_window():
     )
     dpg.add_button(
         label="Create",
-        callback=lambda: init_profil(dpg.get_value("new_profil_name"), dpg.get_value("new_profil_copy_from")),
+        callback=lambda: create_profil(dpg.get_value("new_profil_name"), dpg.get_value("new_profil_copy_from")),
     )
     dpg.pop_container_stack()
 
@@ -134,20 +132,20 @@ def create_settings_ui_window():
     dpg.pop_container_stack()
 
 
-def sort_stocks_by_maturity(cfg: dict, state: str = "mature", reverse: bool = False):
+def sort_stocks_by_maturity(state: str = "mature", reverse: bool = False):
     close_all_settings_windows()
     cfg["stocks"].sort(key=lambda stock: stock["state"] == state)
-    render_plots(cfg)
+    render_plots()
     for stock in cfg["stocks"]:
-        update_graph(cfg, stock)
+        update_graph(stock)
 
 
-def sort_stocks_by_name(cfg: dict, reverse: bool = False):
+def sort_stocks_by_name(reverse: bool = False):
     close_all_settings_windows()
     cfg["stocks"].sort(key=lambda stock: stock["name"].upper())
-    render_plots(cfg)
+    render_plots()
     for stock in cfg["stocks"]:
-        update_graph(cfg, stock)
+        update_graph(stock)
 
 
 def monitor_on_off():
@@ -156,7 +154,7 @@ def monitor_on_off():
         cfg["ui"]["monitor"] = not cfg["ui"]["monitor"]
         return
     cfg["ui"]["monitor"] = True
-    monitor_stocks(cfg)
+    monitor_stocks()
 
 
 def update_refresh_interval(sender, app_data: int):
@@ -165,23 +163,23 @@ def update_refresh_interval(sender, app_data: int):
 
 def update_plot_height(sender, app_data: int):
     cfg["ui"]["graph_initial_height"] = app_data
-    render_plots(cfg)
+    render_plots()
     for stock in cfg["stocks"]:
-        update_graph(cfg, stock)
+        update_graph(stock)
     dpg.focus_item("input_plot_height")
 
 
 def update_plot_width(sender, app_data: int):
     cfg["ui"]["graph_initial_width"] = app_data
-    render_plots(cfg)
+    render_plots()
     for stock in cfg["stocks"]:
-        update_graph(cfg, stock)
+        update_graph(stock)
     dpg.focus_item("input_plot_width")
 
 
 def update_plot_time_range(sender, period: str):
     for stock in cfg["stocks"]:
-        change_period(None, period, {"cfg": cfg, "stock": stock})
+        change_period(None, period, {"stock": stock})
 
 
 def work_in_progress():
