@@ -1,4 +1,4 @@
-import os, re, shutil
+import os, re, shutil, sys
 import dearpygui.dearpygui as dpg
 from utils.modal import modal
 
@@ -37,22 +37,57 @@ def get_profils_list() -> list:
 
 
 def switch_profil(profil: str = "default") -> dict:
-    from utils.plots import (render_plots, monitor_stocks, delete_plots)
+    from utils.plots import (clear_price_history, initialize_price_history, render_plots, monitor_stocks, delete_plots)
     from components.menu.top_bar import create_profils_menu
     delete_plots()
     open_profil(profil)
+    clear_price_history()
+    initialize_price_history()
     render_plots()
     create_profils_menu()
     monitor_stocks()
 
 
-def open_profil(profil: str = "default") -> dict:
+def remove_profil(r):
+    try:
+        is_valid_profil_name(cfg["profil"]["current"])
+        shutil.rmtree(f"profils/{cfg['profil']['current']}")
+    except Exception as error_message:
+        return modal(f"Fail to remove profil {cfg['profil']['current']}\n{error_message}", color = (250,0,0))
+    switch_profil("empty")
 
-    is_valid_profil_name(profil)
-    cfg["ui"] = cfg_module_to_dict(profil, "ui")
-    cfg["stocks"] = cfg_module_to_dict(profil, "stocks")
-    cfg["alerts"] = cfg_module_to_dict(profil, "alerts")
+
+def error(error, display_error = False):
+    if display_error:
+        print(error)
+    else:
+        modal(error, color = (250,0,0))
+
+def open_profil(profil: str = None, display_error = False) -> dict:
+
+    if profil is None:
+        from profils import session
+        profil = session.cfg["last_profil_used"]
+        if not is_valid_profil_name(profil, display_error):
+            error(f"profil {profil} is invalide", display_error)
+            profil = "empty"
+        elif not os.path.isdir(f"profils/{profil}"):
+            error(f"profil {profil} not found", display_error)
+            profil = "empty"
+
+    is_valid_profil_name(profil, display_error)
+    cfg["profil"] = {"current": profil}
+    try:
+        cfg["ui"] = cfg_module_to_dict(profil, "ui")
+        cfg["stocks"] = cfg_module_to_dict(profil, "stocks")
+        cfg["alerts"] = cfg_module_to_dict(profil, "alerts")
+    except Exception as error_message:
+        if display_error:
+            return modal(f"Fail to load profil {profil}\n{error_message}", color = (250,0,0))
+        raise Exception(f"Fail to load profil {profil}\n{error_message}")
     set_default_values()
+    with open("profils/session.py", "w") as session_file:
+        session_file.write('cfg = {"last_profil_used": "' + profil + '"}')
     return cfg
 
 
@@ -71,6 +106,10 @@ def create_profil(profil: str, copy_from_profil: str = "empty"):
         dpg.add_text(str(error_message), color=(255,0,0), tag="new_profil_window_error", parent="new_profil_window", wrap=240)
 
 
-def is_valid_profil_name(profil: str):
+def is_valid_profil_name(profil: str, display_error = False):
     if not re.search(r"^[a-zA-Z0-9_]{1,100}$", profil):
+        if display_error:
+            modal("Invalid profil name, syntax accepted is: 1 to 100 letters numbers and _", color = (250,0,0))
+            return False
         raise Exception("Invalid profil name, syntax accepted is: 1 to 100 letters numbers and _")
+    return True

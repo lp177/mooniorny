@@ -26,6 +26,11 @@ def initialize_price_history():
         previous_prices[stock["ISIN"]] = price_history[stock["ISIN"]][-1]
 
 
+def clear_price_history():
+    for key in price_history.copy().keys():
+        del price_history[key]
+
+
 def monitor_stocks():
     for stock in cfg["stocks"]:
         ticker = yfinance.Ticker(stock["ISIN"])

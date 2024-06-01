@@ -1,6 +1,5 @@
 import time
 import threading
-from profils import session
 import dearpygui.dearpygui as dpg
 from utils.profils import cfg, open_profil
 from utils.plots import render_plots, initialize_price_history, monitor_stocks
@@ -32,7 +31,10 @@ def start_monitoring():
         if cfg["ui"]["monitor"] is True:
             monitor_stocks()
 
-open_profil(session.cfg["last_profil_used"])
+try:
+    open_profil()
+except:
+    open_profil("empty")
 initialize_price_history()
 initialize_gui()
 monitor_stocks()

@@ -1,6 +1,7 @@
 import dearpygui.dearpygui as dpg
 from utils.modal import modal
-from utils.profils import (cfg, get_profils_list, create_profil, switch_profil)
+from utils.image import insert_image
+from utils.profils import (cfg, get_profils_list, create_profil, switch_profil, remove_profil)
 from utils.plots import (
     render_plots,
     update_graph,
@@ -65,7 +66,7 @@ def create_profils_menu():
     with dpg.menu(label="Profils", tag="profils_menu", before=before):
         dpg.add_menu_item(label="New profil", callback=create_new_profil_window)
         dpg.add_menu_item(label="Save profil", callback=work_in_progress)
-        dpg.add_menu_item(label="Delete profil", callback=work_in_progress)
+        dpg.add_menu_item(label="Delete profil", callback=remove_profil)
         with dpg.menu(label="Open profil"):
             profils = get_profils_list()
             for profil in profils:
@@ -88,7 +89,7 @@ def create_new_profil_window():
     modal(label="Profils", tag="new_profil_window", height=250)
     dpg.push_container_stack("new_profil_window")
     dpg.add_text("New profil name:")
-    dpg.add_input_text(tag="new_profil_name")
+    dpg.add_input_text(tag="new_profil_name", on_enter=True, callback=lambda: create_profil(dpg.get_value("new_profil_name"), dpg.get_value("new_profil_copy_from")))
     dpg.add_text("Copy from:")
     dpg.add_combo(
         default_value="empty",
@@ -106,28 +107,38 @@ def create_settings_ui_window():
     modal(label="Settings", tag="settings_window", height=250)
     dpg.push_container_stack("settings_window")
     dpg.add_text("Set Refresh Interval (seconds):")
-    dpg.add_input_int(
-        default_value=cfg["ui"]["refresh_interval"],
-        callback=update_refresh_interval,
-    )
+    with dpg.group(horizontal=True):
+        dpg.add_input_int(
+            default_value=cfg["ui"]["refresh_interval"],
+            on_enter=True,
+            callback=update_refresh_interval,
+        )
+        dpg.add_button(tag="update_refresh_interval_bt", callback=update_refresh_interval)
+        insert_image(image_path="images/save.png", parent="update_refresh_interval_bt")
     dpg.add_text("Plot default height:")
-    dpg.add_input_int(
-        default_value=cfg["ui"]["graph_initial_height"],
-        callback=update_plot_height,
-        tag="input_plot_height",
-    )
+    with dpg.group(horizontal=True):
+        dpg.add_input_int(
+            default_value=cfg["ui"]["graph_initial_height"],
+            tag="input_plot_height",
+            on_enter=True,
+            callback=update_plot_height,
+        )
+        dpg.add_button(label="Update", callback=update_plot_height)
     dpg.add_text("Plot default width:")
-    dpg.add_input_int(
-        default_value=cfg["ui"]["graph_initial_width"],
-        callback=update_plot_width,
-        tag="input_plot_width",
-    )
+    with dpg.group(horizontal=True):
+        dpg.add_input_int(
+            default_value=cfg["ui"]["graph_initial_width"],
+            tag="input_plot_width",
+            on_enter=True,
+            callback=update_plot_width,
+        )
+        dpg.add_button(label="Update", callback=update_plot_width)
     dpg.add_text("Plot default time range:")
     dpg.add_combo(
         default_value=cfg["ui"]["default_time_range"],
         items=list(cfg["ui"]["periods"].keys()),
-        callback=update_plot_time_range,
         width=100,
+        callback=update_plot_time_range,
     )
     dpg.pop_container_stack()
 

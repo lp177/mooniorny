@@ -8,9 +8,10 @@ def modal(
     tag=0,
     width: int = 300,
     height: int = 200,
-    show=True,
-    modal=True,
+    show: bool = True,
+    modal: bool = True,
     padding_size: int = 30,
+    color: tuple = (250,250,250),
 ):
     top = int(dpg.get_viewport_height() / 2 - (height / 2))
     left = int(dpg.get_viewport_width() / 2 - (width / 2))
@@ -31,7 +32,7 @@ def modal(
         on_close=lambda: dpg.delete_item(tag),
     ) as window:
         if text is not None:
-            dpg.add_text(text)
+            dpg.add_text(text, color=color)
     with dpg.theme() as padding:
         with dpg.theme_component(dpg.mvAll):
             dpg.add_theme_style(
