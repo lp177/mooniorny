@@ -118,3 +118,8 @@ venv.bak/
 
 # VSCode garbage
 .vscode/
+
+# Profils
+/profils/
+!/profils/default
+!/profils/empty
