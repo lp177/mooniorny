@@ -9,7 +9,7 @@ from components.shortcuts.keyboards_global import init_global_shortcuts
 
 def initialize_gui():
     dpg.create_context()
-    init_global_shortcuts()
+    # init_global_shortcuts()
     dpg.create_viewport(
         title=cfg["ui"]["title"],
         width=2560,
