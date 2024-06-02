@@ -89,7 +89,7 @@ def create_profils_menu():
                     callback=lambda sender, state, profil: switch_profil(profil),
                     user_data=profil,
                     check=True,
-                    default_value=profil==cfg["profil"]["current"],
+                    default_value=profil == cfg["profil"]["current"],
                 )
 
 
@@ -132,6 +132,7 @@ def create_new_profil_window():
     )
     dpg.bind_item_theme("create_new_profil_bt", large_input_theme)
     dpg.pop_container_stack()
+
 
 def create_settings_ui_window():
     close_all_settings_windows()
