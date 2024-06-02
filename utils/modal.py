@@ -11,7 +11,7 @@ def modal(
     show: bool = True,
     modal: bool = True,
     padding_size: int = 30,
-    color: tuple = (250,250,250),
+    color: tuple = (250, 250, 250),
 ):
     top = int(dpg.get_viewport_height() / 2 - (height / 2))
     left = int(dpg.get_viewport_width() / 2 - (width / 2))

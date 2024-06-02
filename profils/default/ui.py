@@ -8,6 +8,7 @@ def get_screen_size():
     del tkinter
     return width, height
 
+
 width, height = get_screen_size()
 cfg = {
     "title": "Mooniorny",

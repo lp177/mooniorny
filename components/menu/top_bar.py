@@ -1,7 +1,14 @@
 import dearpygui.dearpygui as dpg
 from utils.modal import modal
 from utils.image import insert_image
-from utils.profils import (cfg, get_profils_list, create_profil, switch_profil, remove_profil)
+from components.theme.loader import get_theme
+from utils.profils import (
+    cfg,
+    get_profils_list,
+    create_profil,
+    switch_profil,
+    remove_profil,
+)
 from utils.plots import (
     render_plots,
     update_graph,
@@ -10,7 +17,12 @@ from utils.plots import (
 )
 import webbrowser
 
-settings_windows = ["about_modal", "new_profil_window", "settings_window", "work_in_progress"]
+settings_windows = [
+    "about_modal",
+    "new_profil_window",
+    "settings_window",
+    "work_in_progress",
+]
 
 
 def init_menu():
@@ -73,7 +85,11 @@ def create_profils_menu():
                 if profil == "empty":
                     continue
                 dpg.add_menu_item(
-                    label=profil, callback=lambda sender, state, profil: switch_profil(profil), user_data=profil
+                    label=profil,
+                    callback=lambda sender, state, profil: switch_profil(profil),
+                    user_data=profil,
+                    check=True,
+                    default_value=profil==cfg["profil"]["current"],
                 )
 
 
@@ -87,59 +103,81 @@ def close_all_settings_windows():
 def create_new_profil_window():
     close_all_settings_windows()
     modal(label="Profils", tag="new_profil_window", height=250)
+    large_input_theme = get_theme("inputs", "large_input")
     dpg.push_container_stack("new_profil_window")
     dpg.add_text("New profil name:")
-    dpg.add_input_text(tag="new_profil_name", on_enter=True, callback=lambda: create_profil(dpg.get_value("new_profil_name"), dpg.get_value("new_profil_copy_from")))
+    dpg.add_input_text(
+        tag="new_profil_name",
+        on_enter=True,
+        callback=lambda: create_profil(
+            dpg.get_value("new_profil_name"), dpg.get_value("new_profil_copy_from")
+        ),
+    )
+    dpg.bind_item_theme("new_profil_name", large_input_theme)
     dpg.add_text("Copy from:")
     dpg.add_combo(
         default_value="empty",
         items=get_profils_list(),
         tag="new_profil_copy_from",
     )
+    dpg.bind_item_theme("new_profil_copy_from", large_input_theme)
+    dpg.add_dummy(height=10)
     dpg.add_button(
         label="Create",
-        callback=lambda: create_profil(dpg.get_value("new_profil_name"), dpg.get_value("new_profil_copy_from")),
+        callback=lambda: create_profil(
+            dpg.get_value("new_profil_name"), dpg.get_value("new_profil_copy_from")
+        ),
+        indent=60,
+        tag="create_new_profil_bt",
     )
+    dpg.bind_item_theme("create_new_profil_bt", large_input_theme)
     dpg.pop_container_stack()
 
 def create_settings_ui_window():
     close_all_settings_windows()
-    modal(label="Settings", tag="settings_window", height=250)
+    modal(label="Settings", tag="settings_window", height=300)
     dpg.push_container_stack("settings_window")
     dpg.add_text("Set Refresh Interval (seconds):")
+    insert_image(image_path="images/save.png", texture_tag="save", just_texture=True)
+    large_input_theme = get_theme("inputs", "large_input")
     with dpg.group(horizontal=True):
         dpg.add_input_int(
             default_value=cfg["ui"]["refresh_interval"],
-            on_enter=True,
-            callback=update_refresh_interval,
+            tag="update_refresh_interval_input",
         )
-        dpg.add_button(tag="update_refresh_interval_bt", callback=update_refresh_interval)
-        insert_image(image_path="images/save.png", parent="update_refresh_interval_bt")
+        dpg.bind_item_theme("update_refresh_interval_input", large_input_theme)
+        dpg.add_image_button(
+            texture_tag="save", width=27, height=27, callback=update_refresh_interval
+        )
     dpg.add_text("Plot default height:")
     with dpg.group(horizontal=True):
         dpg.add_input_int(
             default_value=cfg["ui"]["graph_initial_height"],
             tag="input_plot_height",
-            on_enter=True,
-            callback=update_plot_height,
         )
-        dpg.add_button(label="Update", callback=update_plot_height)
+        dpg.bind_item_theme("input_plot_height", large_input_theme)
+        dpg.add_image_button(
+            texture_tag="save", width=27, height=27, callback=update_plot_height
+        )
     dpg.add_text("Plot default width:")
     with dpg.group(horizontal=True):
         dpg.add_input_int(
             default_value=cfg["ui"]["graph_initial_width"],
             tag="input_plot_width",
-            on_enter=True,
-            callback=update_plot_width,
         )
-        dpg.add_button(label="Update", callback=update_plot_width)
+        dpg.bind_item_theme("input_plot_width", large_input_theme)
+        dpg.add_image_button(
+            texture_tag="save", width=27, height=27, callback=update_plot_width
+        )
     dpg.add_text("Plot default time range:")
     dpg.add_combo(
         default_value=cfg["ui"]["default_time_range"],
         items=list(cfg["ui"]["periods"].keys()),
         width=100,
         callback=update_plot_time_range,
+        tag="input_plot_time_range",
     )
+    dpg.bind_item_theme("input_plot_time_range", large_input_theme)
     dpg.pop_container_stack()
 
 
@@ -168,20 +206,20 @@ def monitor_on_off():
     monitor_stocks()
 
 
-def update_refresh_interval(sender, app_data: int):
-    cfg["ui"]["refresh_interval"] = app_data
+def update_refresh_interval():
+    cfg["ui"]["refresh_interval"] = dpg.get_value("update_refresh_interval_input")
 
 
-def update_plot_height(sender, app_data: int):
-    cfg["ui"]["graph_initial_height"] = app_data
+def update_plot_height():
+    cfg["ui"]["graph_initial_height"] = dpg.get_value("input_plot_height")
     render_plots()
     for stock in cfg["stocks"]:
         update_graph(stock)
     dpg.focus_item("input_plot_height")
 
 
-def update_plot_width(sender, app_data: int):
-    cfg["ui"]["graph_initial_width"] = app_data
+def update_plot_width():
+    cfg["ui"]["graph_initial_width"] = dpg.get_value("input_plot_width")
     render_plots()
     for stock in cfg["stocks"]:
         update_graph(stock)

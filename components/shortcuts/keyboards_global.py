@@ -2,9 +2,11 @@ import dearpygui.dearpygui as dpg
 from utils.modal import modal
 from utils.profils import cfg
 
+
 def init_global_shortcuts():
     with dpg.handler_registry():
         dpg.add_key_press_handler(callback=change_text)
+
 
 def change_text(sender, app_data):
     if not dpg.does_item_exist("shortcuts_display"):
@@ -16,6 +18,7 @@ def change_text(sender, app_data):
         if dpg.is_key_down(key):
             txt += keymap[cfg["ui"]["keyboard_map"]][key] + " + "
     dpg.add_text(txt[:-3], tag="shortcuts_displayed", parent="shortcuts_display")
+
 
 keymap = {
     "azerty": {
@@ -115,7 +118,7 @@ keymap = {
         dpg.mvKey_Subtract: "/",
         dpg.mvKey_Divide: "/",
         dpg.mvKey_Backslash: "\\",
-        dpg.mvKey_Quote: "\"",
+        dpg.mvKey_Quote: '"',
         dpg.mvKey_0: "0",
         dpg.mvKey_NumPad0: "0",
         dpg.mvKey_1: "1",
@@ -260,7 +263,7 @@ keymap = {
         dpg.mvKey_Subtract: "/",
         dpg.mvKey_Divide: "/",
         dpg.mvKey_Backslash: "\\",
-        dpg.mvKey_Quote: "\"",
+        dpg.mvKey_Quote: '"',
         dpg.mvKey_0: "0",
         dpg.mvKey_NumPad0: "0",
         dpg.mvKey_1: "1",
@@ -307,5 +310,5 @@ keymap = {
         dpg.mvKey_X: "X",
         dpg.mvKey_Y: "Y",
         dpg.mvKey_Z: "Z",
-    }
+    },
 }

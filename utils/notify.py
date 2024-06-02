@@ -1,5 +1,6 @@
 import os, platform, subprocess
 from utils.profils import cfg
+
 EMAIL_SMTP_SERVER_ADRESS = os.getenv("EMAIL_ADDRESS")
 EMAIL_SMTP_PORT = os.getenv("EMAIL_SMTP_PORT")
 EMAIL_RECEIVER_ADRESS = os.getenv("EMAIL_RECEIVER_ADRESS")

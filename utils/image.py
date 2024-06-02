@@ -2,6 +2,7 @@ import dearpygui.dearpygui as dpg
 
 images = {}
 
+
 def insert_image(
     image_path: str,
     parent=None,
@@ -9,6 +10,8 @@ def insert_image(
     height: int = None,
     size_percent: int = None,
     tag=0,
+    texture_tag=0,
+    just_texture=False,
 ):
 
     if image_path not in images:
@@ -20,6 +23,7 @@ def insert_image(
                 height=original_height,
                 default_value=data,
                 parent=reg_id,
+                tag=texture_tag,
             )
         images[image_path] = {
             "original_width": original_width,
@@ -30,6 +34,9 @@ def insert_image(
         original_width = images[image_path]["original_width"]
         original_height = images[image_path]["original_height"]
         texture_id = images[image_path]["texture_id"]
+
+    if just_texture:
+        return
 
     if width is None:
         width = original_width
